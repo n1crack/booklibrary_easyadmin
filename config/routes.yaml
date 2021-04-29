@@ -1,3 +1,17 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+
+index:
+  path: /
+  controller: App\Controller\BooksController::index
+  methods: [GET]
+
+book_create:
+  path: /books/create
+  controller: App\Controller\BooksController::create
+
+book_store:
+  path: /books
+  controller: App\Controller\BooksController::store
+  methods: [POST]

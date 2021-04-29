@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Books Library!{% endblock %}
+
+{% block body %}
+
+
+<div class="container mx-auto">
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+  <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+
+     <div class="p-5 mt-5">
+     <div class="m-5">
+        <h1 class="font-bold text-2xl">Book Library</h1>
+      </div>
+            
+
+      <div class="m-5">
+          <a href="/books/create" class="hover:text-blue-500 p-3 border border-gray-400">Add new book</a>
+      </div>
+
+      <div class="m-5">
+        <div class="mt-3">
+          Search :
+        </div>
+        <input type="search" placeholder="Search" class="w-full border border-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm p-2" />
+      </div>
+
+      <div>
+      <div class="flex flex-col sm:flex-row">
+          <div class="">
+            Table
+          </div>
+          <div class="sm:ml-auto sm:w-64 bg-gray-200 rounded-lg p-5">
+            <div class="font-bold mb-2">Category List: </div>
+            <ul class="list-disc list-inside">
+              {% for category in categories %}
+                  <li><a href="/books/{{ category.id }}">{{ category.name }}</a></li>
+              {% endfor %}
+            <ul>
+
+          </div>
+      </div>
+      </div>
+
+      </div>
+  </div>
+</div>
+</div>
+
+{% endblock %}

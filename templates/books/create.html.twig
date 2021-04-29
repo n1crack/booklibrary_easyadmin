@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Books Library!{% endblock %}
+
+{% block body %}
+
+
+<div class="container mx-auto">
+<div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+  <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+
+     <div class="p-5 mt-5">
+     <div class="m-5">
+        <h1 class="font-bold text-2xl">Book Library</h1>
+      </div>
+            
+
+      <div class="m-5">
+          <a href="/" class="hover:text-blue-500 p-3 border border-gray-400">< Back</a>
+      </div>
+
+      <div>
+      <div class="flex flex-col sm:flex-row">
+          <div class="w-full p-2">
+            <div class="m-5 font-bold"> Add New Book</div>
+            {{ form_start(bookForm) }}
+                {{ form_row(bookForm.name, {
+                    label: 'Book title'
+                }) }}
+                {{ form_row(bookForm.image) }}
+                {{ form_row(bookForm.author) }}
+                {{ form_row(bookForm.category) }}
+  
+                <button type="submit" class="btn btn-primary">Save</button>
+            {{ form_end(bookForm) }}
+          </div>
+          
+        
+      </div>
+      </div>
+
+      </div>
+  </div>
+</div>
+</div>
+
+{% endblock %}
