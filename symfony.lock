@@ -136,6 +136,9 @@
     "phpdocumentor/type-resolver": {
         "version": "1.4.0"
     },
+    "predis/predis": {
+        "version": "v1.1.7"
+    },
     "psr/cache": {
         "version": "2.0.0"
     },

@@ -3,9 +3,13 @@
 namespace App\Repository;
 
 use App\Entity\Book;
+use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Predis\Client;
+
 
 /**
  * @method Book|null find($id, $lockMode = null, $lockVersion = null)
@@ -15,6 +19,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class BookRepository extends ServiceEntityRepository
 {
+    public const PAGINATOR_PER_PAGE = 5;
     private $manager;
 
     public function __construct(ManagerRegistry $registry, EntityManagerInterface $manager)
@@ -36,22 +41,36 @@ class BookRepository extends ServiceEntityRepository
         $this->manager->flush();
     }
 
-    // /**
-    //  * @return Book[] Returns an array of Book objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
+
+    /**
+    * @return Paginator Returns an array of Book objects
     */
+    public function findBySearch($category, $search, int $page): Paginator
+    {
+        $queryBuilder = $this->createQueryBuilder('b');
+        $queryBuilder = $queryBuilder
+        ->where(
+                $queryBuilder->expr()->orX(
+                  $queryBuilder->expr()->like('b.name', ':name'),
+                  $queryBuilder->expr()->like('b.author', ':author'),
+                )
+              )
+              ->setParameter('name', '%'.$search.'%')
+              ->setParameter('author', '%'.$search.'%');
+        
+        if (isset($category)) {
+          $queryBuilder = $queryBuilder
+                  ->andWhere('b.category = :id')
+                  ->setParameter(':id', $category);
+        }
+
+        $queryBuilder = $queryBuilder->orderBy('b.id', 'ASC')
+              ->setMaxResults(self::PAGINATOR_PER_PAGE)
+              ->setFirstResult(($page-1) * self::PAGINATOR_PER_PAGE)
+              ->getQuery();
+              
+        return new Paginator($queryBuilder);
+    }
 
     /*
     public function findOneBySomeField($value): ?Book

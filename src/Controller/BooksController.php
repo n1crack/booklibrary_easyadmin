@@ -9,43 +9,21 @@ use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Sluggable\Util\Urlizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 
 class BooksController extends AbstractController
 {
+      private $bookRepository;
 
-    #[Route('/books', name: 'books', methods: ["GET"])]
-    public function index(): Response
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-        $categories = $entityManager->getRepository(Category::class)->findAll();
-
-        $books = $entityManager->getRepository(Book::class)->findAll();
-
-        return $this->render('books/index.html.twig', [
-            'categories' => $categories,
-            'books' => $books
-        ]);
-    }
-
-  //  #[Route('/books/create', name: 'books.create')]
-  //  public function create(): Response
-  //  {
-  //      $entityManager = $this->getDoctrine()->getManager();
-  //      $categories = $entityManager->getRepository(Category::class)->findAll();
-
-  //      return $this->render('books/create.html.twig', [
-  //          'categories' => $categories,
-  //      ]);
-  //  }
+      public function __construct(BookRepository $bookRepository)
+      {
+          $this->bookRepository = $bookRepository;
+      }
 
     #[Route('/books/create', name: 'books.store', methods: ["POST"])]
     public function create(Request $request, EntityManagerInterface $em)
@@ -73,11 +51,42 @@ class BooksController extends AbstractController
           $em->persist($book);
           $em->flush();
 
-          return $this->redirectToRoute('books');
+          return $this->redirectToRoute('index');
       }
       return $this->render('books/create.html.twig', [
           'bookForm' => $form->createView()
       ]);
 
+    }
+
+    #[Route('/search/{category}', name: 'search', methods: ["GET"])]
+    public function search(Request $request, Category $category = null)
+    {
+        $search = $request->get('q');
+        $page = $request->query->getInt('page') == null ? 1 : $request->query->getInt('page');
+  
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $categories = $entityManager->getRepository(Category::class)->findAll();
+
+        $books = $this->bookRepository->findBySearch($category, $search, $page);
+
+        $category_id = ($category instanceof Category) ? $category->getId() : null;
+
+        return $this->render('books/index.html.twig', [
+          'categories' => $categories,
+          'books' => $books,
+          'books_count' => count($books),
+          'search_url' => $this->generateUrl('search', ['id' => $category_id, 'page'=> 1, 'q'=> $search]),
+          'pagination' => [
+            'previous' =>  $this->generateUrl('search', ['id' => $category_id, 'page'=> max($page - 1, 1), 'q'=> $search]),
+            'next' => $this->generateUrl('search', ['id' => $category_id, 'page'=>  min(ceil(count($books) / BookRepository::PAGINATOR_PER_PAGE), $page + 1), 'q'=> $search]),
+            'page_count' => ceil(count($books) / BookRepository::PAGINATOR_PER_PAGE),
+            'current_page' => $page,
+            'page_size' => BookRepository::PAGINATOR_PER_PAGE,
+          ]
+        ]);
+
+        return new JsonResponse(['books' => '' , 'query' => $search], Response::HTTP_CREATED);
     }
 }

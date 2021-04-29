@@ -23,7 +23,9 @@
         <div class="mt-3">
           Search :
         </div>
-        <input type="search" placeholder="Search" class="w-full border border-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm p-2" />
+        <form method="GET" action="{{ search_url }}">
+        <input type="search" {% if app.request.get("q") %} value="{{ app.request.get("q") }}" {% endif %} name="q" placeholder="Search" class="w-full border border-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm p-2" autofocus />
+        </form>
       </div>
 
       <div>
@@ -51,12 +53,28 @@
                        {% endfor %}
                     </tbody>
                   </table>
+                  {% if (pagination) %}
+                   <div class="flex mt-5">
+                   {% if (books_count) > 0 %}
+                      <div class="block">Showing {{ 1 + (pagination.current_page - 1) * pagination.page_size }} to {{  min(pagination.current_page * pagination.page_size, books_count )  }}  of {{ books_count }} entries</div>
+                      <div class="ml-auto ">
+                          <a href="{{ pagination.previous }}" class="border p-4 m-2 {% if (pagination.current_page == 1) %} border-gray-300 text-gray-300 {% else %} border-gray-500 {% endif %}  "><</a>
+                          <a href="{{ pagination.next }}" class="border p-4 m-2 {% if ( pagination.current_page * pagination.page_size >= books_count ) %} border-gray-300 text-gray-300 {% else %} border-gray-500 {% endif %}">></a>
+                      </div>
+                    {% else %}
+                      <div class="block">No records found.</div>
+                    {% endif %}
+                   </div>
+                  {% endif %}
           </div>
           <div class="sm:ml-auto sm:w-64 bg-gray-200 rounded-lg p-5 mt-5 sm:mt-0">
             <div class="font-bold mb-2">Category List: </div>
             <ul class="list-disc list-inside">
+                <li><a href="/">All </a></li>
               {% for category in categories %}
-                  <li><a href="/books/{{ category.id }}">{{ category.name }}</a></li>
+                 {% if (category.getBooksCount > 0) %}
+                  <li><a href="/search/{{ category.id }}">{{ category.name }} ( {{ category.getBooksCount }} )</a></li>
+                 {% endif %}
               {% endfor %}
             <ul>
 
