@@ -19,16 +19,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-
 class BooksController extends AbstractController
 {
-
-    private $bookRepository;
-
-    public function __construct(BookRepository $bookRepository)
-    {
-        $this->bookRepository = $bookRepository;
-    }
 
     #[Route('/books', name: 'books', methods: ["GET"])]
     public function index(): Response
@@ -36,8 +28,11 @@ class BooksController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $categories = $entityManager->getRepository(Category::class)->findAll();
 
+        $books = $entityManager->getRepository(Book::class)->findAll();
+
         return $this->render('books/index.html.twig', [
             'categories' => $categories,
+            'books' => $books
         ]);
     }
 
@@ -77,30 +72,12 @@ class BooksController extends AbstractController
     
           $em->persist($book);
           $em->flush();
-          return new JsonResponse(['status' => 'Book created!'], Response::HTTP_CREATED);
+
+          return $this->redirectToRoute('books');
       }
       return $this->render('books/create.html.twig', [
           'bookForm' => $form->createView()
       ]);
-//       $name = $request->get('name');
-//       $author = $request->get('author');
-//       $image = $request->files->get('image');
-//       $category_id = $request->get('category');
-// 
-//       if (empty($name) || empty($author) || empty($category_id)) {
-//         throw new NotFoundHttpException('Expecting mandatory parameters!');
-//       }
-// 
-//       if (!$image) {
-//           throw new BadRequestHttpException('"thumbnail" is required');
-//       }
-// 
-//       $category = $this->getDoctrine()
-//         ->getRepository(Category::class)
-//         ->find($category_id);
-// 
-//       $this->bookRepository->saveBook($name, $author, $image, $category);
-// 
-//       return new JsonResponse(['status' => 'Book created!'], Response::HTTP_CREATED);
+
     }
 }

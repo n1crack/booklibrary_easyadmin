@@ -23,18 +23,32 @@
       <div class="flex flex-col sm:flex-row">
           <div class="w-full p-2">
             <div class="m-5 font-bold"> Add New Book</div>
+            {% form_theme bookForm 'form/tailwind_layout.html.twig' %}
             {{ form_start(bookForm) }}
                 {{ form_row(bookForm.name, {
-                    label: 'Book title'
+                    row_class: 'flex flex-col mb-3',
+                    label_class: 'font-medium text-sm text-gray-700',
+                    widget_class: 'p-3 border border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full rounded-md shadow-sm w-full'
                 }) }}
-                {{ form_row(bookForm.image) }}
-                {{ form_row(bookForm.author) }}
-                {{ form_row(bookForm.category) }}
+                {{ form_row(bookForm.author, {
+                    row_class: 'flex flex-col mb-3',
+                    label_class: 'font-medium text-sm text-gray-700',
+                    widget_class: 'p-3 border border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full rounded-md shadow-sm w-full'
+                }) }}
+                {{ form_row(bookForm.image, {
+                    row_class: 'flex flex-col mb-3',
+                    label_class: 'font-medium text-sm text-gray-700',
+                    widget_class: 'p-3 border border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full rounded-md shadow-sm w-full'
+                }) }}
+                {{ form_row(bookForm.category, {
+                    row_class: 'flex flex-col mb-3',
+                    label_class: 'font-medium text-sm text-gray-700',
+                    widget_class: 'p-3 border border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-full rounded-md shadow-sm w-full'
+                }) }}
   
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring focus:ring-gray-300 disabled:opacity-25 transition">Save</button>
             {{ form_end(bookForm) }}
           </div>
-          
         
       </div>
       </div>
