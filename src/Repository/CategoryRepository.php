@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Predis\Client;
 
 /**
  * @method Category|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,9 +15,27 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CategoryRepository extends ServiceEntityRepository
 {
+
+    public const CACHE_EXPIRE_IN_SECONDS = 5 * 60;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Category::class);
+    }
+
+    public function getBooksCount(Client $cache)
+    {
+      $categories = $this->findAll();
+
+      if (!$cache->exists('books_count')) {
+        $temp = [];
+        foreach($categories as $category) {
+          $temp[$category->getId()] = $category->getBooksCount(); 
+        }
+        $cache->set('books_count', json_encode($temp) ,'EX', self::CACHE_EXPIRE_IN_SECONDS); // 5 dk cache..
+      }
+
+      return json_decode( $cache->get('books_count') ,true);
     }
 
     // /**

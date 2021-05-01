@@ -6,9 +6,6 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Predis\Client;
-
-use Doctrine\Common\Cache\PredisCache;
 
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
@@ -60,12 +57,7 @@ class Category
      */
     public function getBooksCount()
     {
-        $client = new Client('tcp://localhost:6379');
-        if (!$client->exists('books_count_' . $this->id)) {
-          $client->set('books_count_' . $this->id,  count($this->getBooks()) ,'EX', 5*60); // 5 dk cache..
-        }
-
-        return $client->get('books_count_' . $this->id);
+        return count($this->getBooks());
     }
 
 

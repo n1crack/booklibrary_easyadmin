@@ -8,8 +8,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Predis\Client;
-
 
 /**
  * @method Book|null find($id, $lockMode = null, $lockVersion = null)
@@ -40,7 +38,6 @@ class BookRepository extends ServiceEntityRepository
         $this->manager->persist($newBook);
         $this->manager->flush();
     }
-
 
     /**
     * @return Paginator Returns an array of Book objects

@@ -11,11 +11,6 @@ book_create:
   path: /books/create
   controller: App\Controller\BooksController::create
 
-book_store:
-  path: /books
-  controller: App\Controller\BooksController::store
-  methods: [POST]
-
 search:
   path: /search/{id}
   controller: App\Controller\BooksController::search
