@@ -21,7 +21,7 @@
         <div class="mt-3">
           Search :
         </div>
-        <form method="GET" action="{{ search_url }}">
+        <form method="GET" action="{{ path('search', {'id': app.request.get("id"), 'q': app.request.get("q"), 'page': 1, }) }}">
         <input type="search" {% if app.request.get("q") %} value="{{ app.request.get("q") }}" {% endif %} name="q" placeholder="Search" class="w-full border border-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm p-2" autofocus />
         </form>
       </div>
@@ -53,11 +53,11 @@
             </table>
             {% if (pagination) %}
               <div class="flex mt-5">
-                {% if (book_count) > 0 %}
-                  <div class="block">Showing {{ 1 + (pagination.current_page - 1) * pagination.page_size }} to {{  min(pagination.current_page * pagination.page_size, book_count )  }}  of {{ book_count }} entries</div>
+                {% if (pagination.count) > 0 %}
+                  <div class="block">Showing {{ pagination.from }} to {{  pagination.to }}  of {{ pagination.count }} entries</div>
                   <div class="ml-auto ">
-                      <a href="{{ pagination.previous }}" class="border p-4 m-2 {% if (pagination.current_page == 1) %} border-gray-300 text-gray-300 {% else %} border-gray-500 {% endif %}  "><</a>
-                      <a href="{{ pagination.next }}" class="border p-4 m-2 {% if ( pagination.current_page * pagination.page_size >= book_count ) %} border-gray-300 text-gray-300 {% else %} border-gray-500 {% endif %}">></a>
+                      <a href="{{ path('search', {'id': app.request.get("id"), 'q': app.request.get("q"), 'page': pagination.previous, }) }}" class="border p-4 m-2 {% if (pagination.current_page == 1) %} border-gray-300 text-gray-300 {% else %} border-gray-500 {% endif %}  "><</a>
+                      <a href="{{ path('search', {'id': app.request.get("id"), 'q': app.request.get("q"), 'page': pagination.next, }) }}" class="border p-4 m-2 {% if ( pagination.current_page * pagination.page_size >= pagination.count ) %} border-gray-300 text-gray-300 {% else %} border-gray-500 {% endif %}">></a>
                   </div>
                 {% else %}
                   <div class="block">No records found.</div>

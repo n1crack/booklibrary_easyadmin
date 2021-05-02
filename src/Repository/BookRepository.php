@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Book;
 use App\Entity\Category;
+use App\Service\BookPaginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,55 +18,57 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
  */
 class BookRepository extends ServiceEntityRepository
 {
-    public const PAGINATOR_PER_PAGE = 5;
-    private $manager;
+  private $manager;
 
-    public function __construct(ManagerRegistry $registry, EntityManagerInterface $manager)
-    {
-        parent::__construct($registry, Book::class);
-        $this->manager = $manager;
+  public function __construct(ManagerRegistry $registry, EntityManagerInterface $manager)
+  {
+    parent::__construct($registry, Book::class);
+    $this->manager = $manager;
+  }
+
+  public function saveBook($name, $author, $image, $category)
+  {
+    $newBook = new Book();
+
+    $newBook
+      ->setName($name)
+      ->setAuthor($author)
+      ->setCategory($category);
+
+    $this->manager->persist($newBook);
+    $this->manager->flush();
+  }
+
+  /**
+   * @return Paginator 
+   */
+  public function findBySearch($category, $search, int $page)
+  {
+    $queryBuilder = $this->createQueryBuilder('b');
+    $queryBuilder = $queryBuilder
+      ->where(
+        $queryBuilder->expr()->orX(
+          $queryBuilder->expr()->like('b.name', ':name'),
+          $queryBuilder->expr()->like('b.author', ':author'),
+        )
+      )
+      ->setParameter('name', '%' . $search . '%')
+      ->setParameter('author', '%' . $search . '%');
+
+    if (isset($category)) {
+      $queryBuilder = $queryBuilder
+        ->andWhere('b.category = :id')
+        ->setParameter(':id', $category);
     }
 
-    public function saveBook($name, $author, $image, $category)
-    {
-        $newBook = new Book();
+    $queryBuilder = $queryBuilder->orderBy('b.id', 'ASC')
+      ->setMaxResults(BookPaginator::PAGINATOR_PER_PAGE)
+      ->setFirstResult(($page - 1) * BookPaginator::PAGINATOR_PER_PAGE)
+      ->getQuery();
 
-        $newBook
-            ->setName($name)
-            ->setAuthor($author)
-            ->setCategory($category);
+    $data = new Paginator($queryBuilder);
+    $pagination = (new BookPaginator())->get($page, $data->count()) ;
 
-        $this->manager->persist($newBook);
-        $this->manager->flush();
-    }
-
-    /**
-    * @return Paginator 
-    */
-    public function findBySearch($category, $search, int $page): Paginator
-    {
-        $queryBuilder = $this->createQueryBuilder('b');
-        $queryBuilder = $queryBuilder
-        ->where(
-                $queryBuilder->expr()->orX(
-                  $queryBuilder->expr()->like('b.name', ':name'),
-                  $queryBuilder->expr()->like('b.author', ':author'),
-                )
-              )
-              ->setParameter('name', '%'.$search.'%')
-              ->setParameter('author', '%'.$search.'%');
-        
-        if (isset($category)) {
-          $queryBuilder = $queryBuilder
-                  ->andWhere('b.category = :id')
-                  ->setParameter(':id', $category);
-        }
-
-        $queryBuilder = $queryBuilder->orderBy('b.id', 'ASC')
-              ->setMaxResults(self::PAGINATOR_PER_PAGE)
-              ->setFirstResult(($page-1) * self::PAGINATOR_PER_PAGE)
-              ->getQuery();
-              
-        return new Paginator($queryBuilder);
-    }
+    return compact('data', 'pagination');
+  }
 }

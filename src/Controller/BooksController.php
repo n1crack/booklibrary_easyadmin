@@ -7,8 +7,8 @@ use App\Entity\Category;
 use App\Form\BookType;
 use App\Repository\BookRepository;
 use App\Repository\CategoryRepository;
+use App\Service\BookImageUploader;
 use Doctrine\ORM\EntityManagerInterface;
-use Gedmo\Sluggable\Util\Urlizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,7 +21,6 @@ class BooksController extends AbstractController
 
   public function __construct(BookRepository $bookRepository, CategoryRepository $categoryRepository)
   {
-
     $this->bookRepository = $bookRepository;
     $this->categoryRepository = $categoryRepository;
   }
@@ -29,34 +28,26 @@ class BooksController extends AbstractController
   /**
   * @Route("/books/create", name="book_create", methods={"GET","POST"})
   */
-  public function create(Request $request, EntityManagerInterface $em)
+  public function create(Request $request, EntityManagerInterface $em, BookImageUploader $bookImageUploader)
   {
-
-    $book = new Book();
-    $form = $this->createForm(BookType::class, $book);
+    $form = $this->createForm(BookType::class, new Book());
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-
       /** @var Book $book */
       $book = $form->getData();
-
       /** @var UploadedFile $uploadedFile */
       $uploadedFile = $form['image']->getData();
-      $destination = $this->getParameter('kernel.project_dir') . '/public/uploads';
-      $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
-      $newFilename = Urlizer::urlize($originalFilename) . '-' . uniqid() . '.' . $uploadedFile->guessExtension();
-      $uploadedFile->move(
-        $destination,
-        $newFilename
-      );
-      $book->setImage($newFilename);
+
+      $uploadedImageName = $bookImageUploader->upload($uploadedFile);
+      $book->setImage($uploadedImageName);
 
       $em->persist($book);
       $em->flush();
 
       return $this->redirectToRoute('index');
     }
+    
     return $this->render('books/create.html.twig', [
       'bookForm' => $form->createView()
     ]);
@@ -75,22 +66,11 @@ class BooksController extends AbstractController
 
     $books = $this->bookRepository->findBySearch($category, $search, $page);
 
-    $category_id = ($category instanceof Category) ? $category->getId() : null;
-
     return $this->render('books/index.html.twig', [
       'categories' => $categories,
-      'books' => $books,
-      'book_count' => count($books),
       'book_count_by_categories' => $this->categoryRepository->getBooksCount(),
-      'search_url' => $this->generateUrl('search', ['id' => $category_id, 'page' => 1, 'q' => $search]),
-      'pagination' => [
-        'previous' =>  $this->generateUrl('search', ['id' => $category_id, 'page' => max($page - 1, 1), 'q' => $search]),
-        'next' => $this->generateUrl('search', ['id' => $category_id, 'page' =>  min(ceil(count($books) / BookRepository::PAGINATOR_PER_PAGE), $page + 1), 'q' => $search]),
-        'page_count' => ceil(count($books) / BookRepository::PAGINATOR_PER_PAGE),
-        'current_page' => $page,
-        'page_size' => BookRepository::PAGINATOR_PER_PAGE,
-      ]
+      'books' => $books['data'],
+      'pagination' => $books['pagination']
     ]);
-
   }
 }

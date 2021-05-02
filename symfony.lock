@@ -1,7 +1,4 @@
 {
-    "behat/transliterator": {
-        "version": "v1.3.0"
-    },
     "composer/package-versions-deprecated": {
         "version": "1.11.99.1"
     },
@@ -105,9 +102,6 @@
     },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.3"
-    },
-    "gedmo/doctrine-extensions": {
-        "version": "v3.0.5"
     },
     "laminas/laminas-code": {
         "version": "4.2.1"
