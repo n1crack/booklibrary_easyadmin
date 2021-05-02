@@ -9,7 +9,6 @@ use App\Repository\BookRepository;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Sluggable\Util\Urlizer;
-use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,15 +19,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class BooksController extends AbstractController
 {
   private $bookRepository;
-
   private $categoryRepository;
 
-  private $cache;
-
-  public function __construct(BookRepository $bookRepository, CategoryRepository $categoryRepository, CacheItemPoolInterface $cache)
+  public function __construct(BookRepository $bookRepository, CategoryRepository $categoryRepository)
   {
 
-    $this->cache = $cache;
     $this->bookRepository = $bookRepository;
     $this->categoryRepository = $categoryRepository;
   }
@@ -83,7 +78,7 @@ class BooksController extends AbstractController
       'categories' => $categories,
       'books' => $books,
       'book_count' => count($books),
-      'book_count_by_categories' => $this->categoryRepository->getBooksCount($this->cache),
+      'book_count_by_categories' => $this->categoryRepository->getBooksCount(),
       'search_url' => $this->generateUrl('search', ['id' => $category_id, 'page' => 1, 'q' => $search]),
       'pagination' => [
         'previous' =>  $this->generateUrl('search', ['id' => $category_id, 'page' => max($page - 1, 1), 'q' => $search]),

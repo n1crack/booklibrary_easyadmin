@@ -18,25 +18,29 @@ class CategoryRepository extends ServiceEntityRepository
 
   public const CACHE_EXPIRE_IN_SECONDS = 5 * 60; // 5 dk cache..
 
-  public function __construct(ManagerRegistry $registry)
+  private $cache;
+
+  public function __construct(ManagerRegistry $registry, CacheItemPoolInterface $cache)
   {
     parent::__construct($registry, Category::class);
+
+    $this->cache = $cache;
   }
 
-  public function getBooksCount(CacheItemPoolInterface $cache)
+  public function getBooksCount()
   {
     $categories = $this->findAll();
 
-    if (!$cache->hasItem('books_count')) {
+    if (!$this->cache->hasItem('books_count')) {
       $temp = [];
       foreach ($categories as $category) {
         $temp[$category->getId()] = $category->getBooksCount();
       }
-      $books_count = $cache->getItem('books_count')->set(json_encode($temp));
+      $books_count = $this->cache->getItem('books_count')->set(json_encode($temp));
 
-      $cache->save($books_count); 
+      $this->cache->save($books_count); 
     }
 
-    return json_decode($cache->getItem('books_count')->get(), true);
+    return json_decode($this->cache->getItem('books_count')->get(), true);
   }
 }
