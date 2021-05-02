@@ -28,7 +28,9 @@ class BooksController extends AbstractController
     $this->categoryRepository = $categoryRepository;
   }
 
-  #[Route('/books/create', name: 'books.store', methods: ["POST"])]
+  /**
+  * @Route("/books/create", name="book_create", methods={"GET","POST"})
+  */
   public function create(Request $request, EntityManagerInterface $em)
   {
 
@@ -62,7 +64,10 @@ class BooksController extends AbstractController
     ]);
   }
 
-  #[Route('/search/{category}', name: 'search', methods: ["GET"])]
+  /**
+  * @Route("/", name="index", methods="GET")
+  * @Route("/search/{category}", name="search", methods="GET")
+  */
   public function search(Request $request, Category $category = null)
   {
     $search = $request->get('q');
