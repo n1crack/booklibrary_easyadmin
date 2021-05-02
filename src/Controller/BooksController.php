@@ -9,7 +9,7 @@ use App\Repository\BookRepository;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Sluggable\Util\Urlizer;
-use Predis\Client;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,11 +25,12 @@ class BooksController extends AbstractController
 
   private $cache;
 
-  public function __construct(BookRepository $bookRepository, CategoryRepository $categoryRepository)
+  public function __construct(BookRepository $bookRepository, CategoryRepository $categoryRepository, CacheItemPoolInterface $cache)
   {
+
+    $this->cache = $cache;
     $this->bookRepository = $bookRepository;
     $this->categoryRepository = $categoryRepository;
-    $this->cache = new Client('redis://localhost:6379');
   }
 
   #[Route('/books/create', name: 'books.store', methods: ["POST"])]

@@ -40,7 +40,7 @@ class BookRepository extends ServiceEntityRepository
     }
 
     /**
-    * @return Paginator Returns an array of Book objects
+    * @return Paginator 
     */
     public function findBySearch($category, $search, int $page): Paginator
     {
@@ -68,16 +68,4 @@ class BookRepository extends ServiceEntityRepository
               
         return new Paginator($queryBuilder);
     }
-
-    /*
-    public function findOneBySomeField($value): ?Book
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

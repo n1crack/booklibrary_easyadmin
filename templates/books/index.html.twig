@@ -4,7 +4,6 @@
 
 {% block body %}
 
-
 <div class="container mx-auto">
 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
   <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
@@ -13,7 +12,6 @@
      <div class="m-5">
         <h1 class="font-bold text-2xl">Book Library</h1>
       </div>
-            
 
       <div class="m-5">
           <a href="/books/create" class="hover:text-blue-500 p-3 border border-gray-400">Add new book</a>
@@ -31,41 +29,41 @@
       <div>
       <div class="flex flex-col sm:flex-row">
           <div class="w-full p-2">
-              <table class="table-auto w-full">
-                    <thead>
-                      <tr>
-                        <th>Image</th>
-                        <th>Name</th>
-                        <th>Author</th>
-                        <th>Category</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for book in books %}
-                        <tr>
-                          <td width="150px" class="p-2 border">
-                            <img src="{{ asset('uploads/' ~ book.image) }}" style="max-width:150px;max-height:150px" />
-                          </td>
-                          <td class="p-2 border">{{ book.name }}</td>
-                          <td class="p-2 border">{{ book.author }}</td>
-                          <td class="p-2 border">{{ book.category.name }}</td>
-                        </tr>
-                       {% endfor %}
-                    </tbody>
-                  </table>
-                  {% if (pagination) %}
-                   <div class="flex mt-5">
-                   {% if (book_count) > 0 %}
-                      <div class="block">Showing {{ 1 + (pagination.current_page - 1) * pagination.page_size }} to {{  min(pagination.current_page * pagination.page_size, book_count )  }}  of {{ book_count }} entries</div>
-                      <div class="ml-auto ">
-                          <a href="{{ pagination.previous }}" class="border p-4 m-2 {% if (pagination.current_page == 1) %} border-gray-300 text-gray-300 {% else %} border-gray-500 {% endif %}  "><</a>
-                          <a href="{{ pagination.next }}" class="border p-4 m-2 {% if ( pagination.current_page * pagination.page_size >= book_count ) %} border-gray-300 text-gray-300 {% else %} border-gray-500 {% endif %}">></a>
-                      </div>
-                    {% else %}
-                      <div class="block">No records found.</div>
-                    {% endif %}
-                   </div>
-                  {% endif %}
+            <table class="table-auto w-full">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Name</th>
+                  <th>Author</th>
+                  <th>Category</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for book in books %}
+                  <tr>
+                    <td width="150px" class="p-2 border">
+                      <img src="{{ asset('uploads/' ~ book.image) }}" style="max-width:150px;max-height:150px" />
+                    </td>
+                    <td class="p-2 border">{{ book.name }}</td>
+                    <td class="p-2 border">{{ book.author }}</td>
+                    <td class="p-2 border">{{ book.category.name }}</td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+            </table>
+            {% if (pagination) %}
+              <div class="flex mt-5">
+                {% if (book_count) > 0 %}
+                  <div class="block">Showing {{ 1 + (pagination.current_page - 1) * pagination.page_size }} to {{  min(pagination.current_page * pagination.page_size, book_count )  }}  of {{ book_count }} entries</div>
+                  <div class="ml-auto ">
+                      <a href="{{ pagination.previous }}" class="border p-4 m-2 {% if (pagination.current_page == 1) %} border-gray-300 text-gray-300 {% else %} border-gray-500 {% endif %}  "><</a>
+                      <a href="{{ pagination.next }}" class="border p-4 m-2 {% if ( pagination.current_page * pagination.page_size >= book_count ) %} border-gray-300 text-gray-300 {% else %} border-gray-500 {% endif %}">></a>
+                  </div>
+                {% else %}
+                  <div class="block">No records found.</div>
+                {% endif %}
+              </div>
+            {% endif %}
           </div>
           <div class="sm:ml-auto sm:w-64 bg-gray-200 rounded-lg p-5 mt-5 sm:mt-0">
             <div class="font-bold mb-2">Category List: </div>
@@ -77,11 +75,9 @@
                  {% endif %}
               {% endfor %}
             <ul>
-
           </div>
       </div>
       </div>
-
       </div>
   </div>
 </div>
