@@ -25,7 +25,7 @@ class Category
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity=Book::class, mappedBy="category")
+     * @ORM\OneToMany(targetEntity=Book::class, mappedBy="category", fetch="EAGER")
      */
     private $books;
 
