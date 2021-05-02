@@ -1,0 +1,23 @@
+{
+  "devDependencies": {
+    "@symfony/webpack-encore": "^1.0.0",
+    "autoprefixer": "^10.2.5",
+    "core-js": "^3.0.0",
+    "glob-all": "^3.2.1",
+    "path": "^0.12.7",
+    "postcss": "^8.2.13",
+    "postcss-loader": "^5.2.0",
+    "purgecss-webpack-plugin": "^4.0.3",
+    "regenerator-runtime": "^0.13.2",
+    "tailwindcss": "^2.1.2",
+    "webpack-notifier": "^1.6.0"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "dev-server": "encore dev-server",
+    "dev": "encore dev",
+    "watch": "encore dev --watch",
+    "build": "encore production --progress"
+  }
+}
