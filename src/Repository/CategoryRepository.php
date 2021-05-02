@@ -38,6 +38,8 @@ class CategoryRepository extends ServiceEntityRepository
       }
       $books_count = $this->cache->getItem('books_count')->set(json_encode($temp));
 
+      $books_count->expiresAfter(self::CACHE_EXPIRE_IN_SECONDS);
+      
       $this->cache->save($books_count); 
     }
 
