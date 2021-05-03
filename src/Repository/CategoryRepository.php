@@ -3,9 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Category;
+use App\Utils\BookCountCacheManager;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * @method Category|null find($id, $lockMode = null, $lockVersion = null)
@@ -15,34 +15,21 @@ use Psr\Cache\CacheItemPoolInterface;
  */
 class CategoryRepository extends ServiceEntityRepository
 {
+  private $bookCountCacheManager;
 
-  public const CACHE_EXPIRE_IN_SECONDS = 5 * 60; // 5 dk cache..
-
-  private $cache;
-
-  public function __construct(ManagerRegistry $registry, CacheItemPoolInterface $cache)
+  public function __construct(ManagerRegistry $registry, BookCountCacheManager $bookCountCacheManager)
   {
     parent::__construct($registry, Category::class);
 
-    $this->cache = $cache;
+    $this->bookCountCacheManager = $bookCountCacheManager;
   }
 
   public function getBooksCount()
   {
     $categories = $this->findAll();
 
-    if (!$this->cache->hasItem('books_count')) {
-      $temp = [];
-      foreach ($categories as $category) {
-        $temp[$category->getId()] = $category->getBooksCount();
-      }
-      $books_count = $this->cache->getItem('books_count')->set(json_encode($temp));
+    $books_count = $this->bookCountCacheManager->get($categories);
 
-      $books_count->expiresAfter(self::CACHE_EXPIRE_IN_SECONDS);
-      
-      $this->cache->save($books_count); 
-    }
-
-    return json_decode($this->cache->getItem('books_count')->get(), true);
+    return json_decode($books_count, true);
   }
 }
