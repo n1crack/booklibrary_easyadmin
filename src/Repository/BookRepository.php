@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Book;
 use App\Entity\Category;
-use App\Service\BookPaginator;
+use App\Utils\BookPaginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
