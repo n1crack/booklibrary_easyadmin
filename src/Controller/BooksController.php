@@ -9,6 +9,7 @@ use App\Repository\BookRepository;
 use App\Repository\CategoryRepository;
 use App\Service\BookImageUploader;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,7 +29,7 @@ class BooksController extends AbstractController
   /**
    * @Route("/books/create", name="book_create", methods={"GET","POST"})
    */
-  public function create(Request $request, EntityManagerInterface $em, BookImageUploader $bookImageUploader)
+  public function create(Request $request, EntityManagerInterface $em, BookImageUploader $bookImageUploader, CacheItemPoolInterface $cache)
   {
     $form = $this->createForm(BookType::class, new Book());
     $form->handleRequest($request);
@@ -47,6 +48,8 @@ class BooksController extends AbstractController
 
       return $this->redirectToRoute('index');
     }
+
+    $cache->deleteItem('books_count');
 
     return $this->render('books/create.html.twig', [
       'bookForm' => $form->createView()
