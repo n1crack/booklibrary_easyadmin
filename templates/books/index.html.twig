@@ -63,9 +63,9 @@
               <div class="flex my-2">
                 {% if (pagination.count) > 0 %}
                   <div class="flex self-center">Showing {{ pagination.from }} to {{  pagination.to }}  of {{ pagination.count }} entries</div>
-                  <div class="flex ml-auto ">
-                      <a href="{{ path('search', {'category': app.request.get("category"), 'q': app.request.get("q"), 'page': pagination.previous, }) }}" class="border p-4 m-2 {% if (pagination.current_page == 1) %} border-gray-300 text-gray-300 {% else %} border-gray-500 {% endif %}  "><</a>
-                      <a href="{{ path('search', {'category': app.request.get("category"), 'q': app.request.get("q"), 'page': pagination.next, }) }}" class="border p-4 m-2 {% if ( pagination.current_page * pagination.page_size >= pagination.count ) %} border-gray-300 text-gray-300 {% else %} border-gray-500 {% endif %}">></a>
+                  <div x-data class="flex ml-auto ">
+                      <a href="{{ path('search', {'category': app.request.get("category"), 'q': app.request.get("q"), 'page': pagination.previous, }) }}" class="border p-4 m-2 {% if (pagination.current_page == 1) %} border-gray-300 text-gray-300 {% else %} border-gray-500 {% endif %}"  {% if (pagination.current_page == 1) %} @click.prevent {% endif %}><</a>
+                      <a href="{{ path('search', {'category': app.request.get("category"), 'q': app.request.get("q"), 'page': pagination.next, }) }}" class="border p-4 m-2 {% if ( pagination.current_page * pagination.page_size >= pagination.count ) %} border-gray-300 text-gray-300 {% else %} border-gray-500 {% endif %}" {% if ( pagination.current_page * pagination.page_size >= pagination.count ) %} @click.prevent {% endif %} >></a>
                   </div>
                 {% else %}
                   <div class="block">No records found.</div>
