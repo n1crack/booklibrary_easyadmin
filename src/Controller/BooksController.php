@@ -26,8 +26,8 @@ class BooksController extends AbstractController
   }
 
   /**
-  * @Route("/books/create", name="book_create", methods={"GET","POST"})
-  */
+   * @Route("/books/create", name="book_create", methods={"GET","POST"})
+   */
   public function create(Request $request, EntityManagerInterface $em, BookImageUploader $bookImageUploader)
   {
     $form = $this->createForm(BookType::class, new Book());
@@ -47,20 +47,23 @@ class BooksController extends AbstractController
 
       return $this->redirectToRoute('index');
     }
-    
+
     return $this->render('books/create.html.twig', [
       'bookForm' => $form->createView()
     ]);
   }
 
   /**
-  * @Route("/", name="index", methods="GET")
-  * @Route("/search/{category}", name="search", methods="GET")
-  */
-  public function search(Request $request, Category $category = null)
+   * @Route("/", name="index", methods="GET")
+   * @Route("/search/{category}", name="search", methods="GET")
+   */
+  public function search(Request $request)
   {
     $search = $request->get('q');
     $page = $request->query->getInt('page') == null ? 1 : $request->query->getInt('page');
+
+    $category_id = $request->query->get('category');
+    $category = $category_id ? $this->categoryRepository->find($category_id) : null;
 
     $categories = $this->categoryRepository->findAll();
 
@@ -68,6 +71,7 @@ class BooksController extends AbstractController
 
     return $this->render('books/index.html.twig', [
       'categories' => $categories,
+      'category' => $category,
       'book_count_by_categories' => $this->categoryRepository->getBooksCount(),
       'books' => $books['data'],
       'pagination' => $books['pagination']

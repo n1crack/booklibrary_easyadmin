@@ -12,8 +12,6 @@ book_create:
   controller: App\Controller\BooksController::create
 
 search:
-  path: /search/{id}
+  path: /search
   controller: App\Controller\BooksController::search
   methods: [GET]
-  defaults:
-    id: null
