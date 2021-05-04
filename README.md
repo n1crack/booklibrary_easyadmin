@@ -32,4 +32,7 @@ username: admin
 password: pass
 
 # register path: /register
+
+
+# admin path: /admin
 ```
