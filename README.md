@@ -36,3 +36,12 @@ password: pass
 
 # admin path: /admin
 ```
+
+```env
+# set MAILER_DSN variable in your ".env" file:
+# you can use https://mailtrap.io/ for testing
+MAILER_DSN="smtp://<your-unique-hash-id>@smtp.mailtrap.io:2525?encryption=tls&auth_mode=login"
+
+# set DATABASE_URL variable in your ".env" file:
+DATABASE_URL="sqlite:///%kernel.project_dir%/var/data.db"
+```
