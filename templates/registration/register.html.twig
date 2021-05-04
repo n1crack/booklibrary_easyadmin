@@ -1,0 +1,53 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# This template checks for 'ea' variable existence because it can
+   be used in a EasyAdmin Dashboard controller, where 'ea' is defined
+   or from any other Symfony controller, where 'ea' is not defined #}
+{% extends ea is defined ? ea.templatePath('layout') : '@EasyAdmin/page/login_minimal.html.twig' %}
+{% trans_default_domain ea is defined ? ea.i18n.translationDomain : (translation_domain is defined ? translation_domain ?? 'messages') %}
+
+{% block body_class 'page-login' %}
+
+{% block page_title %} Register {% endblock %}
+
+{% block wrapper_wrapper %}
+
+    <div class="login-wrapper">
+        {% for flashError in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+        {% endfor %}
+
+        {% form_theme registrationForm 'form/register_form_layout.html.twig' %}
+        <section class="content">
+          <h1>Register</h1>
+              {{ form_start(registrationForm) }}
+              {{ form_errors(registrationForm) }}
+              {{ form_row(registrationForm.username, {
+                    label_attr: {'class': 'sr-only form-control-label required'},
+                    attr: {'placeholder': 'Username'},
+                    icon: 'fa fa-fw fa-user'
+                  })
+              }}
+              {{ form_row(registrationForm.email, {
+                    label_attr: {'class': 'sr-only form-control-label required'},
+                    attr: {'placeholder': 'Email'},
+                    icon: 'fa fa-fw fa-envelope'
+                  }) }}
+              {{ form_row(registrationForm.plainPassword.first, {
+                    label_attr: {'class': 'sr-only form-control-label required'},
+                    attr: {'placeholder': 'Password'},
+                    icon: 'fa fa-fw fa-lock'
+                  }) }}
+            {{ form_row(registrationForm.plainPassword.second, {
+                    label_attr: {'class': 'sr-only form-control-label required'},
+                    attr: {'placeholder': 'Verify Password'},
+                    icon: 'fa fa-fw fa-lock'
+                  }) }}
+              {{ form_row(registrationForm.agreeTerms) }}
+
+                <div class="form-group field-button">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">Register</button>
+                </div>
+            {{ form_end(registrationForm) }}
+        </section>
+    </div>
+{% endblock %}

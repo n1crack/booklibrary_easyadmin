@@ -15,3 +15,17 @@ search:
   path: /search
   controller: App\Controller\BooksController::search
   methods: [GET]
+
+# Admin Dashboard
+dashboard:
+  path: /admin
+  controller: App\Controller\Admin\DashboardController::index
+
+# Auth
+app_login:
+  path: /login
+  controller: App\Controller\SecurityController::login
+
+app_logout:
+  path: /logout
+  controller: App\Controller\SecurityController::logout

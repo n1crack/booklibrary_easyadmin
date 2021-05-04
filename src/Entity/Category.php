@@ -60,7 +60,6 @@ class Category
         return count($this->getBooks());
     }
 
-
     /**
      * @return Collection|Book[]
      */
@@ -89,5 +88,10 @@ class Category
         }
 
         return $this;
+    }
+
+    public function __toString()
+    {
+      return $this->name;
     }
 }
