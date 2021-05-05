@@ -22,91 +22,95 @@ use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
 class UserCrudController extends AbstractCrudController
 {
-  public $verifyEmailHelper;
-  public $emailVerifier;
-  public $adminUrlGenerator;
+    public $verifyEmailHelper;
+    public $emailVerifier;
+    public $adminUrlGenerator;
 
-  public function __construct(AdminUrlGenerator $adminUrlGenerator, VerifyEmailHelperInterface $verifyEmailHelper, EmailVerifier $emailVerifier)
-  {
-    $this->emailVerifier = $emailVerifier;
-    $this->verifyEmailHelper = $verifyEmailHelper;
-    $this->adminUrlGenerator = $adminUrlGenerator;
-  }
+    public function __construct(AdminUrlGenerator $adminUrlGenerator, VerifyEmailHelperInterface $verifyEmailHelper, EmailVerifier $emailVerifier)
+    {
+        $this->emailVerifier = $emailVerifier;
+        $this->verifyEmailHelper = $verifyEmailHelper;
+        $this->adminUrlGenerator = $adminUrlGenerator;
+    }
 
-  public static function getEntityFqcn(): string
-  {
-    return User::class;
-  }
+    public static function getEntityFqcn(): string
+    {
+        return User::class;
+    }
 
-  public function configureFields(string $pageName): iterable
-  {
-    yield TextField::new('username');
-    yield TextField::new('email')->setFormType(EmailType::class);
-    yield TextField::new('plainPassword', 'Password')
-      ->setFormType(RepeatedType::class)
-      ->setFormTypeOptions([
-        'type' => PasswordType::class,
-        'invalid_message' => 'The password fields must match.',
-        'options' => ['attr' => ['class' => 'password-field']],
-        'first_options'  => ['label' => 'Password'],
-        'second_options' => ['label' => 'Repeat Password'],
-      ])
-      ->onlyOnForms();
+    public function configureFields(string $pageName): iterable
+    {
+        yield TextField::new('username');
+        yield TextField::new('email')->setFormType(EmailType::class);
+        yield TextField::new('plainPassword', 'Password')
+            ->setFormType(RepeatedType::class)
+            ->setFormTypeOptions([
+                'type' => PasswordType::class,
+                'invalid_message' => 'The password fields must match.',
+                'options' => ['attr' => ['class' => 'password-field']],
+                'first_options' => ['label' => 'Password'],
+                'second_options' => ['label' => 'Repeat Password'],
+            ])
+            ->onlyOnForms()
+        ;
 
-    // yield TextField::new('password', 'Password')
-    //  ->onlyOnIndex(); 
+        // yield TextField::new('password', 'Password')
+        //  ->onlyOnIndex();
 
-    //yield ArrayField::new('roles')->onlyOnForms();
+        //yield ArrayField::new('roles')->onlyOnForms();
 
-    yield ChoiceField::new('roles')
-      ->allowMultipleChoices()
-      ->setChoices([
-        'User' => 'ROLE_USER',
-        'Admin' => 'ROLE_ADMIN'
-      ])
-      ->renderExpanded(true)
-      ->onlyOnForms();
+        yield ChoiceField::new('roles')
+            ->allowMultipleChoices()
+            ->setChoices([
+                'User' => 'ROLE_USER',
+                'Admin' => 'ROLE_ADMIN',
+            ])
+            ->renderExpanded(true)
+            ->onlyOnForms()
+        ;
 
-    yield BooleanField::new('isActive');
+        yield BooleanField::new('isActive');
 
-    yield BooleanField::new('isVerified');
-  }
+        yield BooleanField::new('isVerified');
+    }
 
-  public function configureActions(Actions $actions): Actions
-  {
-    $resend = Action::new('Resend', '')
-      ->setIcon('fas fa-paper-plane')
-      ->setLabel('Resend Verify Email')
-      ->setCssClass('btn btn-secondary')
-      ->linkToCrudAction('resend');
+    public function configureActions(Actions $actions): Actions
+    {
+        $resend = Action::new('Resend', '')
+            ->setIcon('fas fa-paper-plane')
+            ->setLabel('Resend Verify Email')
+            ->setCssClass('btn btn-secondary')
+            ->linkToCrudAction('resend')
+        ;
 
-    return $actions
-      ->add(Crud::PAGE_EDIT, $resend);;
-  }
+        return $actions
+            ->add(Crud::PAGE_EDIT, $resend)
+        ;
+    }
 
-  public function resend(AdminContext $context)
-  {
-    $id     = $context->getRequest()->query->get('entityId');
-    $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+    public function resend(AdminContext $context)
+    {
+        $id = $context->getRequest()->query->get('entityId');
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
 
-    // generate a signed url and email it to the user
-    $this->emailVerifier->sendEmailConfirmation(
-      'app_verify_email',
-      $user,
-      (new TemplatedEmail())
-        ->from(new Address('booklibrary@example.com', 'Book Library'))
-        ->to($user->getEmail())
-        ->subject('Please Confirm your Email')
-        ->htmlTemplate('registration/confirmation_email.html.twig')
-    );
+        // generate a signed url and email it to the user
+        $this->emailVerifier->sendEmailConfirmation(
+            'app_verify_email',
+            $user,
+            (new TemplatedEmail())
+                ->from(new Address('booklibrary@example.com', 'Book Library'))
+                ->to($user->getEmail())
+                ->subject('Please Confirm your Email')
+                ->htmlTemplate('registration/confirmation_email.html.twig')
+        );
 
-    $this->addFlash('success', 'New email sent');
+        $this->addFlash('success', 'New email sent');
 
-    return $this->redirect(
-      $this->adminUrlGenerator
-        ->setController(UserCrudController::class)
-        ->setAction(Action::EDIT)
-        ->generateUrl()
-    );
-  }
+        return $this->redirect(
+            $this->adminUrlGenerator
+                ->setController(UserCrudController::class)
+                ->setAction(Action::EDIT)
+                ->generateUrl()
+        );
+    }
 }

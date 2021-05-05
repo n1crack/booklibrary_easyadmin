@@ -9,57 +9,56 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class HashPasswordListener implements EventSubscriber
 {
+    private $passwordEncoder;
 
-  private $passwordEncoder;
-
-  public function __construct(UserPasswordEncoderInterface $passwordEncoder)
-  {
-    $this->passwordEncoder = $passwordEncoder;
-  }
-
-  public function prePersist(LifecycleEventArgs $args)
-  {
-    $entity = $args->getEntity();
-    if (!$entity instanceof User) {
-      return;
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $this->passwordEncoder = $passwordEncoder;
     }
-    $this->encodePassword($entity);
-  }
 
-  public function preUpdate(LifecycleEventArgs $args)
-  {
-    $entity = $args->getEntity();
-    if (!$entity instanceof User) {
-      return;
+    public function prePersist(LifecycleEventArgs $args)
+    {
+        $entity = $args->getEntity();
+        if (!$entity instanceof User) {
+            return;
+        }
+        $this->encodePassword($entity);
     }
-    $this->encodePassword($entity);
-    // necessary to force the update to see the change
-    $em = $args->getEntityManager();
 
-    $meta = $em->getClassMetadata(get_class($entity));
+    public function preUpdate(LifecycleEventArgs $args)
+    {
+        $entity = $args->getEntity();
+        if (!$entity instanceof User) {
+            return;
+        }
+        $this->encodePassword($entity);
+        // necessary to force the update to see the change
+        $em = $args->getEntityManager();
 
-    $em->getUnitOfWork()->recomputeSingleEntityChangeSet($meta, $entity);
-  }
+        $meta = $em->getClassMetadata(get_class($entity));
 
-  public function getSubscribedEvents()
-  {
-    return ['prePersist', 'preUpdate'];
-  }
-
-  /**
-   * @param User $entity
-   */
-  private function encodePassword(User $entity)
-  {
-    if (!$entity->getPlainPassword()) {
-      return;
+        $em->getUnitOfWork()->recomputeSingleEntityChangeSet($meta, $entity);
     }
+
+    public function getSubscribedEvents()
+    {
+        return ['prePersist', 'preUpdate'];
+    }
+
+    /**
+     * @param User $entity
+     */
+    private function encodePassword(User $entity)
+    {
+        if (!$entity->getPlainPassword()) {
+            return;
+        }
     
-    $encoded = $this->passwordEncoder->encodePassword(
-      $entity,
-      $entity->getPlainPassword()
-    );
+        $encoded = $this->passwordEncoder->encodePassword(
+            $entity,
+            $entity->getPlainPassword()
+        );
 
-    $entity->setPassword($encoded);
-  }
+        $entity->setPassword($encoded);
+    }
 }

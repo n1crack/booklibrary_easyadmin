@@ -12,34 +12,34 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class BookType extends AbstractType
 {
-  private $categoryRepository;
+    private $categoryRepository;
 
-  public function __construct(CategoryRepository $categoryRepository)
-  {
-    $this->categoryRepository = $categoryRepository;
-  }
-  public function buildForm(FormBuilderInterface $builder, array $options)
-  {
-    $builder
-      ->add('name', TextType::class, [])
-      ->add('author', TextType::class, [
-        'required' => true,
-      ])
-      ->add('category', EntityType::class, [
-        'class' => Category::class,
-        'choices' => $this->getCategoryList(),
-        'choice_label' => 'name',
-        'required' => true,
-      ])
-      ->add('image', FileType::class, [
-        'mapped' => false
-      ]);
-  }
+    public function __construct(CategoryRepository $categoryRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+    }
 
-  public function getCategoryList()
-  {
-    $categories = $this->categoryRepository->findAll();
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('name', TextType::class, [])
+            ->add('author', TextType::class, [
+                'required' => true,
+            ])
+            ->add('category', EntityType::class, [
+                'class' => Category::class,
+                'choices' => $this->getCategoryList(),
+                'choice_label' => 'name',
+                'required' => true,
+            ])
+            ->add('image', FileType::class, [
+                'mapped' => false,
+            ])
+        ;
+    }
 
-    return $categories;
-  }
+    public function getCategoryList()
+    {
+        return $this->categoryRepository->findAll();
+    }
 }

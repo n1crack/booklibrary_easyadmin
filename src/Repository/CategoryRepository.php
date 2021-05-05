@@ -15,21 +15,21 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CategoryRepository extends ServiceEntityRepository
 {
-  private $bookCountCacheManager;
+    private $bookCountCacheManager;
 
-  public function __construct(ManagerRegistry $registry, BookCountCacheManager $bookCountCacheManager)
-  {
-    parent::__construct($registry, Category::class);
+    public function __construct(ManagerRegistry $registry, BookCountCacheManager $bookCountCacheManager)
+    {
+        parent::__construct($registry, Category::class);
 
-    $this->bookCountCacheManager = $bookCountCacheManager;
-  }
+        $this->bookCountCacheManager = $bookCountCacheManager;
+    }
 
-  public function getBooksCount()
-  {
-    $categories = $this->findAll();
+    public function getBooksCount()
+    {
+        $categories = $this->findAll();
 
-    $books_count = $this->bookCountCacheManager->get($categories);
+        $books_count = $this->bookCountCacheManager->get($categories);
 
-    return json_decode($books_count, true);
-  }
+        return json_decode($books_count, true);
+    }
 }

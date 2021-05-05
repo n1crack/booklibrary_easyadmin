@@ -22,7 +22,7 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="string", length=25, unique=true)
-     * 
+     *
      */
     private $username;
 
@@ -33,7 +33,7 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="string", length=254, unique=true)
-     * 
+     *
      */
     private $email;
 
@@ -97,7 +97,7 @@ class User implements UserInterface, \Serializable
 
     public function getIsActive()
     {
-      return $this->isActive;
+        return $this->isActive;
     }
 
     public function setIsActive(string $isActive): self
@@ -175,7 +175,7 @@ class User implements UserInterface, \Serializable
     /** @see \Serializable::unserialize() */
     public function unserialize($serialized)
     {
-        list (
+        list(
             $this->id,
             $this->username,
             $this->password,

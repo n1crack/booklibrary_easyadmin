@@ -10,29 +10,29 @@ use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 
 class BookSubscriber implements EventSubscriberInterface
 {
-  private $params;
+    private $params;
 
-  private $filesystem;
+    private $filesystem;
 
-  public function __construct(ContainerBagInterface $params, Filesystem $filesystem)
-  {
-    $this->params = $params;
-    $this->filesystem = $filesystem;
-  }
-
-  public static function getSubscribedEvents()
-  {
-    return [
-      AfterEntityDeletedEvent::class => ['deleteFile']
-    ];
-  }
-
-  public function deleteFile(AfterEntityDeletedEvent $event)
-  {
-    $entity = $event->getEntityInstance();
-
-    if ($entity instanceof Book) {
-      $this->filesystem->remove([$this->params->get('upload_directory') . '/' . $entity->getImage()]);
+    public function __construct(ContainerBagInterface $params, Filesystem $filesystem)
+    {
+        $this->params = $params;
+        $this->filesystem = $filesystem;
     }
-  }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            AfterEntityDeletedEvent::class => ['deleteFile'],
+        ];
+    }
+
+    public function deleteFile(AfterEntityDeletedEvent $event)
+    {
+        $entity = $event->getEntityInstance();
+
+        if ($entity instanceof Book) {
+            $this->filesystem->remove([$this->params->get('upload_directory').'/'.$entity->getImage()]);
+        }
+    }
 }

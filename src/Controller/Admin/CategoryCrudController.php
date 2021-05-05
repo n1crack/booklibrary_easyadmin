@@ -34,5 +34,4 @@ class CategoryCrudController extends AbstractCrudController
             ->add(Crud::PAGE_EDIT, Action::DETAIL)
         ;
     }
-    
 }

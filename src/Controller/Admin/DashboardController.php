@@ -19,7 +19,7 @@ class DashboardController extends AbstractDashboardController
 
     public function __construct(AdminUrlGenerator $adminUrlGenerator)
     {
-      $this->adminUrlGenerator = $adminUrlGenerator;
+        $this->adminUrlGenerator = $adminUrlGenerator;
     }
 
     /**
@@ -56,6 +56,5 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('User');
         yield MenuItem::linkToCrud('Users', 'fas fa-list', User::class);
-
     }
 }

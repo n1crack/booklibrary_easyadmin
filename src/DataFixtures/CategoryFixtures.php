@@ -8,7 +8,6 @@ use Doctrine\Persistence\ObjectManager;
 
 class CategoryFixtures extends Fixture
 {
-
     public $categoryList = [
         'Fantasy',
         'Science Fiction',
@@ -47,9 +46,9 @@ class CategoryFixtures extends Fixture
         // $manager->persist($product);
 
         for ($i = 0; $i < count($this->categoryList) ; $i++) {
-          $category = new Category();
-          $category->setName($this->categoryList[$i]);
-          $manager->persist($category);
+            $category = new Category();
+            $category->setName($this->categoryList[$i]);
+            $manager->persist($category);
         }
         $manager->flush();
     }

@@ -1,84 +1,114 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Books Library!{% endblock %}
+{% block title %}
+	Books Library!
+{% endblock %}
 
 {% block body %}
 
-<div class="container mx-auto">
-<div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-  <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+	<div class="container mx-auto">
+		<div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+			<div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
 
-     <div class="p-5 mt-5">
-     <div class="m-5 mb-12">
-        <h1 class="font-bold text-2xl"><a class="hover:text-yellow-600" href="/">Book Library</a></h1>
-      </div>
+				<div class="p-5 mt-5">
+					<div class="m-5 mb-12">
+						<h1 class="font-bold text-2xl">
+							<a class="hover:text-yellow-600" href="/">
+								Book Library
+							</a>
+						</h1>
+					</div>
 
-      <div class="m-5">
-          <a href="/books/create" class="hover:text-blue-500 p-3 border border-gray-400">Add new book</a>
-      </div>
+					<div class="m-5">
+						<a href="/books/create" class="hover:text-blue-500 p-3 border border-gray-400">
+							Add new book
+						</a>
+					</div>
 
-      <div class="m-5" x-data>
-        <div class=" my-3">
-          <div class="py-2 font-bold">Search :</div>
-          {% if (category) %}
-          <div class="p-1 w-min whitespace-nowrap px-2 rounded-lg bg-gray-400 text-white">{{ category.name }}  
-            <a href="{{ path('search', { 'q': app.request.get('q') }) }}">x<a>
-          </div>
-          {% endif %}
-        </div>
-        <form x-ref="searchform" method="GET" action="{{ path('search', {'category': app.request.get("category"), 'q': app.request.get("q") }) }}">
-        {% if (app.request.get("category")) %}
-          <input type="hidden" name="category" value="{{ app.request.get("category") }}">
-        {% endif %}
-          <input @search="$refs.searchform.submit()" type="search" {% if app.request.get("q") %} value="{{ app.request.get("q") }}" {% endif %} name="q" placeholder="Search" class="w-full border border-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm p-2" autofocus />
-        </form>
-      </div>
+					<div class="m-5" x-data>
+						<div class=" my-3">
+							<div class="py-2 font-bold">
+								Search :
+							</div>
+							{% if (category) %}
+								<div class="p-1 w-min whitespace-nowrap px-2 rounded-lg bg-gray-400 text-white">
+									{{ category.name }}
+									<a href="{{ path('search', { 'q': app.request.get('q') }) }}">
+										x
+										<a></div>
+									{% endif %}
+								</div>
+								<form x-ref="searchform" method="GET" action="{{ path('search', {'category': app.request.get(" category"), 'q': app.request.get(" q") }) }}">
+									{% if (app.request.get("category")) %}
+										<input type="hidden" name="category" value="{{ app.request.get(" category") }}">
+									{% endif %}
+									<input @search="$refs.searchform.submit()" type="search" {% if app.request.get("q") %} value="{{ app.request.get(" q") }}" {% endif %} name="q" placeholder="Search" class="w-full border border-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm p-2" autofocus/>
+								</form>
+							</div>
 
-      <div>
-      <div class="flex flex-col sm:flex-row">
-          <div class="w-full p-2">
-            <table class="table-auto w-full">
-              <thead>
-                <tr>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Author</th>
-                  <th>Category</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for book in books %}
-                  <tr>
-                    <td width="150px" class="p-2 border">
-                      <img src="{{ asset('uploads/' ~ book.image) }}" style="max-width:150px;max-height:150px" />
-                    </td>
-                    <td class="p-2 border">{{ book.name }}</td>
-                    <td class="p-2 border">{{ book.author }}</td>
-                    <td class="p-2 border">{{ book.category.name }}</td>
-                  </tr>
-                  {% endfor %}
-              </tbody>
-            </table>
-            {% if (pagination) %}
-              {% include 'components/pagination.html.twig' with {'pagination': pagination} %}
-            {% endif %}
-          </div>
-          <div class="sm:ml-auto sm:w-64 bg-gray-200 rounded-lg p-5 ">
-            <div class="font-bold mb-2">Category List: </div>
-            <ul class="list-disc list-inside">
-                <li><a href="/">All </a></li>
-              {% for category in categories %}
-                 {% if (book_count_by_categories[category.id] > 0) %}
-                  <li><a href="{{ path('search', { 'category': category.id } )}}">{{ category.name }} ( {{ book_count_by_categories[category.id] }} )</a></li>
-                 {% endif %}
-              {% endfor %}
-            <ul>
-          </div>
-      </div>
-      </div>
-      </div>
-  </div>
-</div>
-</div>
+							<div>
+								<div class="flex flex-col sm:flex-row">
+									<div class="w-full p-2">
+										<table class="table-auto w-full">
+											<thead>
+												<tr>
+													<th>Image</th>
+													<th>Name</th>
+													<th>Author</th>
+													<th>Category</th>
+												</tr>
+											</thead>
+											<tbody>
+												{% for book in books %}
+													<tr>
+														<td width="150px" class="p-2 border">
+															<img src="{{ asset('uploads/' ~ book.image) }}" style="max-width:150px;max-height:150px"/>
+														</td>
+														<td class="p-2 border">
+															{{ book.name }}
+														</td>
+														<td class="p-2 border">
+															{{ book.author }}
+														</td>
+														<td class="p-2 border">
+															{{ book.category.name }}
+														</td>
+													</tr>
+												{% endfor %}
+											</tbody>
+										</table>
+										{% if (pagination) %}
+											{% include 'components/pagination.html.twig' with {'pagination': pagination} %}
+										{% endif %}
+									</div>
+									<div class="sm:ml-auto sm:w-64 bg-gray-200 rounded-lg p-5 ">
+										<div class="font-bold mb-2">
+											Category List:
+										</div>
+										<ul class="list-disc list-inside">
+											<li>
+												<a href="/">
+													All
+												</a>
+											</li>
+											{% for category in categories %}
+												{% if (book_count_by_categories[category.id] > 0) %}
+													<li>
+														<a href="{{ path('search', { 'category': category.id } ) }}">
+															{{ category.name }}
+															(
+															{{ book_count_by_categories[category.id] }}
+															)
+														</a>
+													</li>
+												{% endif %}
+											{% endfor %}
+											<ul></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 
-{% endblock %}
+				{% endblock %}

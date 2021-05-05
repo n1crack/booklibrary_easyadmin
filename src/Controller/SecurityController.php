@@ -14,10 +14,10 @@ class SecurityController extends AbstractController
      */
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-      $error = $authenticationUtils->getLastAuthenticationError();
-      $lastUsername = $authenticationUtils->getLastUsername();
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $lastUsername = $authenticationUtils->getLastUsername();
 
-      return $this->render('@EasyAdmin/page/login.html.twig', [
+        return $this->render('@EasyAdmin/page/login.html.twig', [
           // parameters usually defined in Symfony login forms
           'error' => $error,
           'last_username' => $lastUsername,
