@@ -34,7 +34,7 @@ class Book
     private $image;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="books")
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="books", fetch="EAGER")
      * @ORM\JoinColumn(nullable=false)
      */
     private $category;
