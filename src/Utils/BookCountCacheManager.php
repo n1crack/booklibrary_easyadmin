@@ -15,7 +15,7 @@ class BookCountCacheManager
         $this->cache = $cacheMyRedis;
     }
 
-    public function get($categories)
+    public function build($categories)
     {
         if (!$this->cache->hasItem('books_count')) {
             $temp = [];
@@ -30,6 +30,6 @@ class BookCountCacheManager
             $this->cache->save($books_count);
         }
 
-        return $this->cache->getItem('books_count')->get();
+        return json_decode($this->cache->getItem('books_count')->get(), true);
     }
 }

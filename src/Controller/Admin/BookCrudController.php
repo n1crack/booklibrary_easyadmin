@@ -7,6 +7,7 @@ use App\Form\BookType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
@@ -38,7 +39,16 @@ class BookCrudController extends AbstractCrudController
 
         yield AssociationField::new('category');
     }
-    
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('name')
+            ->add('author')
+            ->add('category')
+        ;
+    }
+
     public function configureActions(Actions $actions): Actions
     {
         return $actions

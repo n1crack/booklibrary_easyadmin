@@ -7,6 +7,7 @@ use App\Security\EmailVerifier;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -72,6 +73,16 @@ class UserCrudController extends AbstractCrudController
         yield BooleanField::new('isActive');
 
         yield BooleanField::new('isVerified');
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('username')
+            ->add('email')
+            ->add('isActive')
+            ->add('isVerified')
+        ;
     }
 
     public function configureActions(Actions $actions): Actions

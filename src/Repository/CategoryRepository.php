@@ -27,9 +27,7 @@ class CategoryRepository extends ServiceEntityRepository
     public function getBooksCount()
     {
         $categories = $this->findAll();
-
-        $books_count = $this->bookCountCacheManager->get($categories);
-
-        return json_decode($books_count, true);
+        
+        return $this->bookCountCacheManager->build($categories);
     }
 }
